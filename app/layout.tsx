@@ -21,11 +21,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${inter.className} flex flex-col min-h-screen relative selection:bg-primary-500 selection:text-white bg-slate-950 text-slate-50`}>
-        {/* Google AdSense Script for Site Verification */}
+        {/* Google AdSense Script - beforeInteractive automatically injects into <head> */}
         <Script
+          id="google-adsense"
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8447506670397473"
-          strategy="afterInteractive"
+          strategy="beforeInteractive"
           crossOrigin="anonymous"
         />
         {/* Background Effects */}
