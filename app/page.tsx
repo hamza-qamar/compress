@@ -184,7 +184,7 @@ export default function Home() {
         </div>
 
         {/* Features Grid */}
-        <div id="features" className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6 mt-16 mb-16 w-full">
+        <div id="features" className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6 mt-16 mb-16 w-full scroll-mt-20">
             <div className="glass-card p-6 rounded-2xl hover:bg-white/5 transition-colors group">
                 <div className="w-12 h-12 bg-primary-500/10 rounded-xl flex items-center justify-center text-primary-400 mb-4 group-hover:scale-110 transition-transform">
                     <Sliders className="w-6 h-6" />
@@ -214,7 +214,7 @@ export default function Home() {
         </div>
 
         {/* FAQ */}
-        <div id="faq" className="max-w-2xl mx-auto w-full mb-20">
+        <div id="faq" className="max-w-2xl mx-auto w-full mb-20 scroll-mt-20">
             <h2 className="text-2xl font-bold text-white text-center mb-8">Common Questions</h2>
             <div className="space-y-4">
                 <details className="group glass-panel rounded-xl overflow-hidden">
