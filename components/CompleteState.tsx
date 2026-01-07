@@ -124,8 +124,23 @@ export const CompleteState: React.FC<CompleteStateProps> = ({ queue, onReset }) 
     }
   };
 
+  const hasUnreadableFiles = queue.some(item => item.isUnreadable === true);
+
   return (
     <div className="flex flex-col w-full h-full animate-[fadeIn_0.5s_ease-out]">
+        {/* Unreadable Files Warning */}
+        {hasUnreadableFiles && (
+            <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 mb-4 flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                <div className="flex-1">
+                    <h3 className="font-semibold text-red-400 mb-1">Warning: Unreadable Files Detected</h3>
+                    <p className="text-sm text-slate-400">
+                        Some compressed files may be corrupted or unreadable due to extreme compression. Please review and consider using a less aggressive size target.
+                    </p>
+                </div>
+            </div>
+        )}
+
         {/* Summary Card */}
         <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-5 border border-white/10 mb-6 shadow-xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
@@ -168,6 +183,7 @@ export const CompleteState: React.FC<CompleteStateProps> = ({ queue, onReset }) 
             {queue.map(item => {
                 const isSuccess = item.status === 'done';
                 const isWarning = item.status === 'warning';
+                const isUnreadable = item.isUnreadable === true;
                 
                 const currentOriginal = item.originalSize || 0;
                 const currentCompressed = typeof item.compressedSize === 'number' ? item.compressedSize : currentOriginal;
@@ -177,7 +193,7 @@ export const CompleteState: React.FC<CompleteStateProps> = ({ queue, onReset }) 
                 
                 return (
                 <div key={item.id} className={`bg-slate-800/40 border rounded-xl p-3 flex items-center gap-3 group relative overflow-hidden ${
-                    isWarning ? 'border-amber-500/30' : (isSuccess ? 'border-emerald-500/20' : 'border-red-500/30')
+                    isUnreadable ? 'border-red-500/40' : (isWarning ? 'border-amber-500/30' : (isSuccess ? 'border-emerald-500/20' : 'border-red-500/30'))
                 }`}>
                     {/* Progress Bar Background */}
                     {(isSuccess || isWarning) && displayPercent > 0 && (
@@ -188,9 +204,9 @@ export const CompleteState: React.FC<CompleteStateProps> = ({ queue, onReset }) 
                     )}
                     
                     <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                        isWarning ? 'bg-amber-500/10 text-amber-500' : (isSuccess ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400')
+                        isUnreadable ? 'bg-red-500/20 text-red-400' : (isWarning ? 'bg-amber-500/10 text-amber-500' : (isSuccess ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'))
                     }`}>
-                        {isWarning ? <AlertTriangle className="w-5 h-5" /> : (isSuccess ? (item.file.type.includes('pdf') ? <FileText className="w-5 h-5" /> : <ImageIcon className="w-5 h-5" />) : <XCircle className="w-5 h-5" />)}
+                        {isUnreadable ? <AlertTriangle className="w-5 h-5" /> : (isWarning ? <AlertTriangle className="w-5 h-5" /> : (isSuccess ? (item.file.type.includes('pdf') ? <FileText className="w-5 h-5" /> : <ImageIcon className="w-5 h-5" />) : <XCircle className="w-5 h-5" />))}
                     </div>
                     
                     <div className="flex-grow min-w-0 z-10">
@@ -213,7 +229,8 @@ export const CompleteState: React.FC<CompleteStateProps> = ({ queue, onReset }) 
                                     <span className={savedBytes > 0 ? "text-emerald-500" : "text-slate-400"}>
                                         {savedBytes > 0 ? `-${displayPercent}%` : '0%'}
                                     </span>
-                                    {isWarning && <span className="text-amber-500 ml-1">(Limit Reached)</span>}
+                                    {isUnreadable && <span className="text-red-400 ml-1 font-semibold">⚠️ Unreadable</span>}
+                                    {isWarning && !isUnreadable && <span className="text-amber-500 ml-1">(Limit Reached)</span>}
                                 </>
                             ) : (
                                 <span>{item.errorMsg || 'Error'}</span>
@@ -224,8 +241,12 @@ export const CompleteState: React.FC<CompleteStateProps> = ({ queue, onReset }) 
                     {(isSuccess || isWarning) && (
                         <button 
                             onClick={() => handleDownload(item)}
-                            className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-700 hover:bg-primary-600 text-slate-300 hover:text-white transition-all shadow-lg z-10"
-                            title="Download"
+                            className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all shadow-lg z-10 ${
+                                isUnreadable 
+                                    ? 'bg-red-500/20 hover:bg-red-500/30 text-red-400 hover:text-red-300 border border-red-500/30' 
+                                    : 'bg-slate-700 hover:bg-primary-600 text-slate-300 hover:text-white'
+                            }`}
+                            title={isUnreadable ? "Download (File may be unreadable)" : "Download"}
                         >
                             <Download className="w-4 h-4" />
                         </button>

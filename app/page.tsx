@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { UploadCloud, Zap, Lock, Cpu, Sliders, ImageMinus, ChevronDown } from 'lucide-react';
+import { UploadCloud, Zap, Lock, Cpu, Sliders, ImageMinus, ChevronDown, Files } from 'lucide-react';
 import { IdleState } from '@/components/IdleState';
 import { ReviewState } from '@/components/ReviewState';
 import { ProcessingState } from '@/components/ProcessingState';
@@ -16,6 +16,52 @@ export default function Home() {
   const [targetSizeKB, setTargetSizeKB] = useState<number>(200);
 
   const uid = () => Date.now().toString(36) + Math.random().toString(36).substr(2);
+
+  // Check if a compressed file is still readable
+  const checkFileReadability = async (blob: Blob, originalType: string): Promise<boolean> => {
+    return new Promise((resolve) => {
+      if (originalType.includes('pdf')) {
+        // For PDFs, try to read the first few bytes to check if it's a valid PDF
+        const reader = new FileReader();
+        reader.onload = () => {
+          const arrayBuffer = reader.result as ArrayBuffer;
+          const bytes = new Uint8Array(arrayBuffer);
+          // PDF files should start with %PDF (25 50 44 46 in hex)
+          const isValid = bytes.length >= 4 && 
+            bytes[0] === 0x25 && // %
+            bytes[1] === 0x50 && // P
+            bytes[2] === 0x44 && // D
+            bytes[3] === 0x46;   // F
+          resolve(isValid);
+        };
+        reader.onerror = () => resolve(false);
+        reader.readAsArrayBuffer(blob.slice(0, 4));
+      } else {
+        // For images, try to load them
+        const url = URL.createObjectURL(blob);
+        const img = new Image();
+        const timeout = setTimeout(() => {
+          URL.revokeObjectURL(url);
+          resolve(false);
+        }, 2000);
+        
+        img.onload = () => {
+          clearTimeout(timeout);
+          URL.revokeObjectURL(url);
+          // Check if image dimensions are valid (not corrupted)
+          resolve(img.width > 0 && img.height > 0);
+        };
+        
+        img.onerror = () => {
+          clearTimeout(timeout);
+          URL.revokeObjectURL(url);
+          resolve(false);
+        };
+        
+        img.src = url;
+      }
+    });
+  };
 
   const handleFilesSelected = (files: FileList) => {
     const ALLOWED_MIME_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
@@ -94,12 +140,16 @@ export default function Home() {
                 }
             }
             
+            // Check if the compressed file is still readable
+            const isReadable = await checkFileReadability(finalBlob, item.file.type);
+            
             setQueue(prev => prev.map(q => q.id === item.id ? {
                 ...q,
                 status: finalStatus,
                 data: finalBlob,
                 compressedSize: finalBlob.size,
-                errorMsg: finalStatus === 'done' ? undefined : 'Limit Reached'
+                errorMsg: finalStatus === 'done' ? undefined : 'Limit Reached',
+                isUnreadable: !isReadable
             } : q));
 
         } catch (error) {
@@ -184,13 +234,13 @@ export default function Home() {
         </div>
 
         {/* Features Grid */}
-        <div id="features" className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6 mt-16 mb-16 w-full scroll-mt-20">
+        <div id="features" className="max-w-5xl mx-auto grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-16 mb-16 w-full scroll-mt-20">
             <div className="glass-card p-6 rounded-2xl hover:bg-white/5 transition-colors group">
                 <div className="w-12 h-12 bg-primary-500/10 rounded-xl flex items-center justify-center text-primary-400 mb-4 group-hover:scale-110 transition-transform">
                     <Sliders className="w-6 h-6" />
                 </div>
                 <h3 className="font-bold text-white mb-2">Custom Targets</h3>
-                <p className="text-sm text-slate-400">Need exactly 150KB? Set your specific limit and our engine adapts the quality to fit.</p>
+                <p className="text-sm text-slate-400">Need under 150KB? Set your specific limit and our engine adapts the quality to fit.</p>
             </div>
             <div className="glass-card p-6 rounded-2xl hover:bg-white/5 transition-colors group">
                 <div className="w-12 h-12 bg-accent-purple/10 rounded-xl flex items-center justify-center text-accent-purple mb-4 group-hover:scale-110 transition-transform">
@@ -205,6 +255,13 @@ export default function Home() {
                 </div>
                 <h3 className="font-bold text-white mb-2">Instant Preview</h3>
                 <p className="text-sm text-slate-400">See the size difference and percentage saved immediately with smooth animations.</p>
+            </div>
+            <div className="glass-card p-6 rounded-2xl hover:bg-white/5 transition-colors group">
+                <div className="w-12 h-12 bg-accent-cyan/10 rounded-xl flex items-center justify-center text-accent-cyan mb-4 group-hover:scale-110 transition-transform">
+                    <Files className="w-6 h-6" />
+                </div>
+                <h3 className="font-bold text-white mb-2">Bulk Processing</h3>
+                <p className="text-sm text-slate-400">Process multiple files at once with intelligent queue management. Handle large batches efficiently without slowing down.</p>
             </div>
         </div>
 

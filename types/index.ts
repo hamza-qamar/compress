@@ -10,6 +10,7 @@ export interface QueueItem {
   compressedSize: number | null;
   data: Blob | null;
   errorMsg?: string;
+  isUnreadable?: boolean;
 }
 
 export type CompressionConfig = {
