@@ -176,7 +176,11 @@ export default function Home() {
         
         {/* Top Ad */}
         <div className="w-full max-w-4xl mx-auto mb-12 hidden md:block">
-           <AdSlot label="Top Banner" />
+           <AdSlot 
+             label="Top Banner" 
+             adSlot={process.env.NEXT_PUBLIC_ADSENSE_TOP_BANNER}
+             adFormat="auto"
+           />
         </div>
 
         {/* Hero Text */}
@@ -230,7 +234,11 @@ export default function Home() {
 
         {/* Middle Ad */}
         <div className="w-full max-w-4xl mx-auto mt-16 mb-8">
-           <AdSlot label="Middle Banner" />
+           <AdSlot 
+             label="Middle Banner" 
+             adSlot={process.env.NEXT_PUBLIC_ADSENSE_MIDDLE_BANNER}
+             adFormat="auto"
+           />
         </div>
 
         {/* Features Grid */}
@@ -267,7 +275,11 @@ export default function Home() {
 
         {/* Pre-FAQ Ad Banner */}
         <div className="w-full max-w-4xl mx-auto mb-16">
-           <AdSlot label="Recommended Tool" />
+           <AdSlot 
+             label="Recommended Tool" 
+             adSlot={process.env.NEXT_PUBLIC_ADSENSE_RECOMMENDED_TOOL}
+             adFormat="auto"
+           />
         </div>
 
         {/* FAQ */}
@@ -334,7 +346,12 @@ export default function Home() {
 
         {/* Mobile Sticky Ad */}
         <div className="md:hidden fixed bottom-0 left-0 w-full bg-slate-900/90 backdrop-blur border-t border-white/10 p-2 z-50">
-          <AdSlot className="h-16" label="Sponsored" />
+          <AdSlot 
+            className="h-16" 
+            label="Sponsored" 
+            adSlot={process.env.NEXT_PUBLIC_ADSENSE_MOBILE_STICKY}
+            adFormat="horizontal"
+          />
         </div>
 
     </main>
