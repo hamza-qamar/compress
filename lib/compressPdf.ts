@@ -101,7 +101,7 @@ export const compressPDF = async (file: File): Promise<Blob> => {
     
     // PDF-Lib optimization
     const pdfBytes = await pdfDoc.save({ useObjectStreams: true });
-    const newBlob = new Blob([pdfBytes], { type: 'application/pdf' });
+    const newBlob = new Blob([pdfBytes as BlobPart], { type: 'application/pdf' });
 
     if (newBlob.size >= file.size) {
         return file;
