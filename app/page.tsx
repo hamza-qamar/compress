@@ -174,14 +174,7 @@ export default function Home() {
   return (
     <main className="flex-grow flex flex-col items-center justify-start pt-12 pb-24 px-4 sm:px-6 relative">
         
-        {/* Top Ad */}
-        <div className="w-full max-w-4xl mx-auto mb-12 hidden md:block">
-           <AdSlot 
-             label="Top Banner" 
-             adSlot={process.env.NEXT_PUBLIC_ADSENSE_TOP_BANNER}
-             adFormat="auto"
-           />
-        </div>
+        
 
         {/* Hero Text */}
         <div className="text-center max-w-3xl mx-auto mb-12">
@@ -232,14 +225,7 @@ export default function Home() {
             </div>
         </div>
 
-        {/* Middle Ad */}
-        <div className="w-full max-w-4xl mx-auto mt-16 mb-8">
-           <AdSlot 
-             label="Middle Banner" 
-             adSlot={process.env.NEXT_PUBLIC_ADSENSE_MIDDLE_BANNER}
-             adFormat="auto"
-           />
-        </div>
+       
 
         {/* Features Grid */}
         <div id="features" className="max-w-5xl mx-auto grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-16 mb-16 w-full scroll-mt-20">
@@ -273,14 +259,7 @@ export default function Home() {
             </div>
         </div>
 
-        {/* Pre-FAQ Ad Banner */}
-        <div className="w-full max-w-4xl mx-auto mb-16">
-           <AdSlot 
-             label="Recommended Tool" 
-             adSlot={process.env.NEXT_PUBLIC_ADSENSE_RECOMMENDED_TOOL}
-             adFormat="auto"
-           />
-        </div>
+        
 
         {/* FAQ */}
         <div id="faq" className="max-w-2xl mx-auto w-full mb-20 scroll-mt-20">
@@ -344,15 +323,7 @@ export default function Home() {
             </div>
         </div>
 
-        {/* Mobile Sticky Ad */}
-        <div className="md:hidden fixed bottom-0 left-0 w-full bg-slate-900/90 backdrop-blur border-t border-white/10 p-2 z-50">
-          <AdSlot 
-            className="h-16" 
-            label="Sponsored" 
-            adSlot={process.env.NEXT_PUBLIC_ADSENSE_MOBILE_STICKY}
-            adFormat="horizontal"
-          />
-        </div>
+        
 
     </main>
   );
